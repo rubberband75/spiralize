@@ -1,15 +1,18 @@
 function setup() {
-	createCanvas(window.innerWidth, window.innerHeight);
-	background(0);
+	drawCanvas()
+
+	setShape();
 }
 
 percent = 0.2;
 count = 20;
 shape = null;
-gettingShape = true;
+gettingShape = false;
+colorize = false;
 
 function draw() {
-	setup();
+
+	drawCanvas();
 	// translate(window.innerWidth / 2, window.innerHeight / 2);
 	stroke(255);
 	strokeWeight(3);
@@ -22,15 +25,24 @@ function draw() {
 			shape.fill(percent, count);
 		}
 	}
+
 }
 
 
-
+function drawCanvas() {
+	createCanvas(window.innerWidth, window.innerHeight);
+	background(0);
+}
 
 class Shape {
 	constructor(points) {
 		this.points = points;
 		this.inner = null;
+		this.color = color(random(255), random(255), random(255));
+	}
+
+	setPoints(points) {
+		this.points = points;
 	}
 
 	addPoint(x, y) {
@@ -45,6 +57,7 @@ class Shape {
 	}
 
 	draw() {
+		if (colorize) fill(this.color);
 		beginShape();
 		for (var i in this.points) {
 			vertex(this.points[i].x, this.points[i].y);
@@ -57,8 +70,12 @@ class Shape {
 		for (var i = 0; i < this.points.length; i++) {
 			lerpedPoints.push(Point.lerp(this.points[i], this.points[(i + 1) % this.points.length], percent));
 		}
+		if (this.inner) {
+			this.inner.setPoints(lerpedPoints);
+		} else {
+			this.inner = new Shape(lerpedPoints);
+		}
 
-		this.inner = new Shape(lerpedPoints);
 		return this.inner;
 	}
 
@@ -128,3 +145,35 @@ document.addEventListener('contextmenu', function (e) {
 	// alert('success!');
 	return true;
 }, false);
+
+
+
+function setShape() {
+	let centerX = window.innerWidth / 2;
+	let centerY = window.innerHeight / 2;
+
+	let l = 300;
+	let points = [
+		[-l, -l],
+		[l, -l],
+		[-l, -l],
+
+		[l, -l],
+		[l, l],
+		[l, -l],
+
+		[l, l],
+		[-l, l],
+		[l, l],
+
+		[-l, l],
+		[-l, -l],
+		[-l, l]
+
+	]
+
+	shape = new Shape([]);
+	for (var i in points) {
+		shape.addPoint(centerX + points[i][0], centerY + points[i][1]);
+	}
+}
