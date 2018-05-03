@@ -13,7 +13,7 @@ colorize = false;
 function draw() {
 
 	drawCanvas();
-	// translate(window.innerWidth / 2, window.innerHeight / 2);
+	// translate(canvasWidth / 2, canvasHeight / 2);
 	stroke(255);
 	strokeWeight(1);
 	noFill();
@@ -31,7 +31,15 @@ function draw() {
 
 
 function drawCanvas() {
-	createCanvas(window.innerWidth, window.innerHeight);
+
+	// var canvas = createCanvas(canvasWidth, canvasHeight);
+
+	canvasWidth = document.getElementById('canvasContainer').offsetWidth
+	canvasHeight = window.innerHeight//document.getElementById('canvasContainer').offsetHeight
+
+
+	var canvas = createCanvas(canvasWidth,canvasHeight);
+	canvas.parent('canvasContainer');
 	background(0);
 }
 
@@ -151,8 +159,8 @@ document.addEventListener('contextmenu', function (e) {
 
 
 function setShape() {
-	let centerX = window.innerWidth / 2;
-	let centerY = window.innerHeight / 2;
+	let centerX = canvasWidth / 2;
+	let centerY = canvasHeight / 2;
 
 	let l = 400;
 	let points = [
