@@ -4,9 +4,9 @@ function setup() {
 	setShape();
 }
 
-percent = 0.2;
-count = 20;
-shape = null;
+percent = 0.03;
+count = 76;
+shapes = [];
 gettingShape = false;
 colorize = false;
 
@@ -15,17 +15,18 @@ function draw() {
 	drawCanvas();
 	// translate(window.innerWidth / 2, window.innerHeight / 2);
 	stroke(255);
-	strokeWeight(3);
+	strokeWeight(1);
 	noFill();
 
-	if (shape) {
-		if (gettingShape) {
-			shape.outline();
+	if (shapes) {
+		if (gettingShape && shapes[0].points.length > 0) {
+			shapes[0].outline();
 		} else {
-			shape.fill(percent, count);
+			for (var i in shapes) {
+				shapes[i].fill(percent, count);
+			}
 		}
 	}
-
 }
 
 
@@ -51,6 +52,7 @@ class Shape {
 	}
 
 	outline() {
+		ellipse(this.points[0].x, this.points[0].y, 4, 4)
 		for (var i = 0; i < this.points.length - 1; i++) {
 			line(this.points[i].x, this.points[i].y, this.points[i + 1].x, this.points[i + 1].y);
 		}
@@ -125,16 +127,16 @@ function handleDown() {
 
 document.addEventListener("mousedown", function (e) {
 	if (e.button == 0) {
-		if (!shape) shape = new Shape([]);
+		if (!shapes) shapes = [new Shape([])];
 		if (gettingShape) {
-			shape.addPoint(e.clientX, e.clientY);
+			shapes[0].addPoint(e.clientX, e.clientY);
 		}
 	}
 
 	if (e.button == 2) {
 		gettingShape = !gettingShape;
 		if (gettingShape) {
-			shape = new Shape([]);
+			shapes = [new Shape([])];
 		}
 	}
 
@@ -152,28 +154,41 @@ function setShape() {
 	let centerX = window.innerWidth / 2;
 	let centerY = window.innerHeight / 2;
 
-	let l = 300;
+	let l = 400;
 	let points = [
-		[-l, -l],
-		[l, -l],
-		[-l, -l],
+		[
+			[-l, -l], [-l, -l],
+			[0, -l], [0, -l],
+			[0, 0], [0, 0],
+			[-l, 0], [-l, 0]
+		],
+		[
+			[0, -l], [0, -l],
+			[l, -l], [l, -l],
+			[l, 0], [l, 0],
+			[0, 0], [0, 0],
+		],
+		[
+			[0, 0], [0, 0],
+			[l, 0], [l, 0],
+			[l, l], [l, l],
+			[0, l], [0, l],
+		],
+		[
+			[-l, 0], [-l, 0],
+			[0, 0], [0, 0],
+			[0, l], [0, l],
+			[-l, l], [-l, l],
+		],
 
-		[l, -l],
-		[l, l],
-		[l, -l],
-
-		[l, l],
-		[-l, l],
-		[l, l],
-
-		[-l, l],
-		[-l, -l],
-		[-l, l]
 
 	]
 
-	shape = new Shape([]);
-	for (var i in points) {
-		shape.addPoint(centerX + points[i][0], centerY + points[i][1]);
+	shapes = [];
+	for (var j in points) {
+		shapes.push(new Shape([]));
+		for (var i in points[j]) {
+			shapes[j].addPoint(centerX + points[j][i][0], centerY + points[j][i][1]);
+		}
 	}
 }
